@@ -7,7 +7,7 @@ using [Rails Templates](http://guides.rubyonrails.org/rails_application_template
 
 ## Minimal
 
-Get a minimal rails app ready to be deployed on Heroku with code quality analysis gems and basic configuration.
+Get a minimal rails with code quality, vulnerability checks and basic configuration for setup and local dev.
 
 ```bash
 rails new \
@@ -23,6 +23,6 @@ Same as minimal **plus** a Devise install with a generated `User` model.
 ```bash
 rails new \
   -d postgresql \
-  -m https://raw.githubusercontent.com/lewagon/rails-templates/master/devise.rb \
+  -m https://raw.githubusercontent.com/HugsDaniel/rails-templates/main/devise.rb \
   CHANGE_THIS_TO_YOUR_RAILS_APP_NAME
 ```

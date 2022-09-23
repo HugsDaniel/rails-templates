@@ -211,7 +211,6 @@ run "chmod +x bin/run"
 # After bundle
 ########################################
 after_bundle do
-
   # Run setup
   ########################################
   run "bin/setup"
