@@ -17,15 +17,27 @@ inject_into_file "Gemfile", before: "group :development, :test do" do
     # lograge changes Rails' logging to a more
     # traditional one-line-per-event format
     gem "lograge"
+
   RUBY
 end
 
 inject_into_file "Gemfile", after: 'gem "debug", platforms: %i[ mri mingw x64_mingw ]' do
-  <<-RUBY
+  <<~RUBY
 
     gem "dotenv-rails"
+    gem "standard"
   RUBY
 end
+
+inject_into_file "Gemfile", after: 'gem "web-console"' do
+  <<~RUBY
+
+    gem "pry-byebug"
+    gem "bullet"
+  RUBY
+end
+
+gsub_file("Gemfile", '# gem "rack-mini-profiler"', 'gem "rack-mini-profiler"')
 
 # README
 ########################################
@@ -166,10 +178,14 @@ file "bin/ci", <<~BASH
   echo "[ bin/ci ] Running system tests"
   bin/rails test:system
 
+  echo "[ bin/ci ] Analyzing ruby code for quality."
+  bundle exec standardrb --fix
+
   echo "[ bin/ci ] Analyzing code for security vulnerabilities."
   echo "[ bin/ci ] Output will be in tmp/brakeman.html, which"
   echo "[ bin/ci ] can be opened in your browser."
   bundle exec brakeman -q -o tmp/brakeman.html
+
 
   echo "[ bin/ci ] Analyzing Ruby gems for"
   echo "[ bin/ci ] security vulnerabilities"
@@ -221,6 +237,10 @@ after_bundle do
   # Dotenv
   ########################################
   run "touch '.env'"
+
+  # Run Standardrb
+  ########################################
+  run "bundle exec standardrb --fix"
 
   # Git
   ########################################
