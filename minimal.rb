@@ -25,6 +25,11 @@ run "curl -L https://github.com/lewagon/rails-stylesheets/archive/master.zip > s
 run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip && rm -f app/assets/rails-stylesheets-master/README.md"
 run "mv app/assets/rails-stylesheets-master app/assets/stylesheets"
 
+# Sprockets manifest (required for Rails 8)
+########################################
+run "mkdir -p app/assets/config"
+run "touch app/assets/config/manifest.js"
+
 # Layout
 ########################################
 
