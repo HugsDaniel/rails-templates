@@ -27,14 +27,17 @@ gsub_file("Gemfile", /^gem "propshaft".*\n/, "")
 ########################################
 run "rm -rf app/assets/stylesheets"
 run "rm -rf vendor"
-run "curl -L https://github.com/lewagon/rails-stylesheets/archive/master.zip > stylesheets.zip"
-run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip && rm -f app/assets/rails-stylesheets-master/README.md"
-run "mv app/assets/rails-stylesheets-master app/assets/stylesheets"
+run "curl -L https://github.com/lewagon/rails-stylesheets/archive/rails-8.zip > stylesheets.zip"
+run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip && rm -f app/assets/rails-stylesheets-rails-8/README.md"
+run "mv app/assets/rails-stylesheets-rails-8 app/assets/stylesheets"
 
 # Sprockets manifest (required for Rails 8)
 ########################################
 run "mkdir -p app/assets/config"
-run "touch app/assets/config/manifest.js"
+file "app/assets/config/manifest.js", <<~JS
+  //= link_tree ../images
+  //= link_directory ../stylesheets .css
+JS
 
 # Layout
 ########################################
