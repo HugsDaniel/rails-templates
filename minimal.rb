@@ -4,6 +4,7 @@ run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 ########################################
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
+    gem "sprockets-rails"
     gem "bootstrap", "~> 5.3"
     gem "autoprefixer-rails"
     gem "font-awesome-sass", "~> 6.1"
@@ -16,6 +17,10 @@ end
 inject_into_file "Gemfile", after: "group :development, :test do" do
   "\n  gem \"dotenv-rails\""
 end
+
+# Replace Propshaft with Sprockets
+########################################
+gsub_file("Gemfile", /^gem "propshaft".*\n/, "")
 
 # Assets
 ########################################
