@@ -48,6 +48,12 @@ gsub_file(
   '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
 )
 
+gsub_file(
+  "app/views/layouts/application.html.erb",
+  'stylesheet_link_tag :app',
+  'stylesheet_link_tag "application"'
+)
+
 # Flashes
 ########################################
 file "app/views/shared/_flashes.html.erb", <<~HTML
