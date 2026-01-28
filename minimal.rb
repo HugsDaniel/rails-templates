@@ -4,6 +4,7 @@ run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 ########################################
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
+    gem "sprockets-rails"
     gem "bootstrap", "~> 5.3"
     gem "autoprefixer-rails"
     gem "font-awesome-sass", "~> 6.1"
@@ -17,13 +18,25 @@ inject_into_file "Gemfile", after: "group :development, :test do" do
   "\n  gem \"dotenv-rails\""
 end
 
+# Replace Propshaft with Sprockets
+########################################
+gsub_file("Gemfile", /^gem "propshaft".*\n/, "")
+
 # Assets
 ########################################
 run "rm -rf app/assets/stylesheets"
 run "rm -rf vendor"
-run "curl -L https://github.com/lewagon/rails-stylesheets/archive/master.zip > stylesheets.zip"
-run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip && rm -f app/assets/rails-stylesheets-master/README.md"
-run "mv app/assets/rails-stylesheets-master app/assets/stylesheets"
+run "curl -L https://github.com/lewagon/rails-stylesheets/archive/rails-8.zip > stylesheets.zip"
+run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip && rm -f app/assets/rails-stylesheets-rails-8/README.md"
+run "mv app/assets/rails-stylesheets-rails-8 app/assets/stylesheets"
+
+# Sprockets manifest (required for Rails 8)
+########################################
+run "mkdir -p app/assets/config"
+file "app/assets/config/manifest.js", <<~JS
+  //= link_tree ../images
+  //= link_directory ../stylesheets .css
+JS
 
 # Layout
 ########################################
@@ -32,6 +45,12 @@ gsub_file(
   "app/views/layouts/application.html.erb",
   '<meta name="viewport" content="width=device-width,initial-scale=1">',
   '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
+)
+
+gsub_file(
+  "app/views/layouts/application.html.erb",
+  'stylesheet_link_tag :app',
+  'stylesheet_link_tag "application"'
 )
 
 # README
@@ -53,14 +72,6 @@ generators = <<~RUBY
 RUBY
 
 environment generators
-
-# General Config
-########################################
-general_config = <<~RUBY
-  config.action_controller.raise_on_missing_callback_actions = false if Rails.version >= "7.1.0"
-RUBY
-
-environment general_config
 
 ########################################
 # After bundle
