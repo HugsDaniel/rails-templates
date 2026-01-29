@@ -12,7 +12,6 @@ inject_into_file "Gemfile", before: "group :development, :test do" do
     gem "tailwindcss-rails"
     gem "simple_form", github: "heartcombo/simple_form"
     gem "ahoy_matey"
-    gem "activeadmin"
     gem "friendly_id"
 
   RUBY
