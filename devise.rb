@@ -216,24 +216,6 @@ after_bundle do
     "  # Uncomment to track visits with Ahoy\n  # before_action :track_ahoy_visit\n\n"
   end
 
-  # ActiveAdmin install
-  ########################################
-  generate "active_admin:install"
-  rails_command "db:migrate"
-
-  # Add admin flag to User model
-  generate :migration, "AddAdminToUsers", "admin:boolean"
-  in_root do
-    migration = Dir.glob("db/migrate/*_add_admin_to_users.rb").first
-    gsub_file migration, ":admin, :boolean", ":admin, :boolean, default: false, null: false" if migration
-  end
-  rails_command "db:migrate"
-
-  # Update skip_pundit? to include ActiveAdmin
-  gsub_file "app/controllers/application_controller.rb",
-    "devise_controller? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)/",
-    "devise_controller? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)|(^active_admin)/"
-
   # FriendlyId install
   ########################################
   generate "friendly_id"
